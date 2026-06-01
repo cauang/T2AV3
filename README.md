@@ -4,7 +4,7 @@ Este repositório contém a solução estruturada e autocontida para o problema 
 
 ---
 
-## 📌 Informações do Projeto
+##  Informações do Projeto
 
 *   **Nome do Problema:** UVa 12144 - Almost Shortest Path
 *   **Link do Problema:** [UVa 12144 (PDF)](https://onlinejudge.org/external/121/12144.pdf)
@@ -16,32 +16,32 @@ Este repositório contém a solução estruturada e autocontida para o problema 
 
 ---
 
-## 📁 Estrutura do Repositório
+##  Estrutura do Repositório
 
 ```text
 T2/
-├── README.md                          # Documentação detalhada do projeto
-├── src/                               # Código-fonte da solução
-│   ├── main.py                        # Ponto de entrada (controla fluxo e leitura)
-│   ├── dijkstra.py                    # Classe utilitária Dijkstra
-│   ├── solver.py                      # Lógica principal AlmostShortestPathSolver
-│   ├── submission.py                  # Monolito completo para submissão imediata na plataforma (UVa)
-│   └── algs4/                         # Módulos de referência baseados na biblioteca algs4-py
+├── README.md                          
+├── src/                               
+│   ├── main.py                        
+│   ├── dijkstra.py                    
+│   ├── solver.py                      
+│   ├── submission.py                  
+│   └── algs4/                         
 │       ├── __init__.py
-│       ├── bag.py                     # Estrutura de coleção linear para lista de adjacências
-│       ├── directed_edge.py           # Representação de arestas direcionadas valoradas
-│       └── edge_weighted_digraph.py   # Representação de dígrafos ponderados por pesos
-├── evidencias/                        # Comprovação de aceitação do juiz online
-│   └── accepted.png                   # Print do status "Accepted" no portal UVa Online Judge
-├── apresentacao/                      # Apresentação do grupo
-│   └── apresentacao.html              # Slides interativos em HTML (abra no navegador)
-└── dados/                             # Conjunto de entradas de teste
-    └── entradas_do_problema.txt       # Arquivos de teste e dados de amostra
+│       ├── bag.py                     
+│       ├── directed_edge.py           
+│       └── edge_weighted_digraph.py   
+├── evidencias/                        
+│   └── accepted.png                   
+├── apresentacao/                      
+│   └── apresentacao.html              
+└── dados/                             
+    └── entradas_do_problema.txt       
 ```
 
 ---
 
-## 🚀 Como Executar a Solução
+##  Como Executar a Solução
 
 A solução foi projetada de forma **autocontida**. Isso significa que ela funciona imediatamente sem a necessidade de instalar dependências de terceiros ou bibliotecas externas.
 
@@ -62,9 +62,16 @@ Caso queira passar entradas dinâmicas via console ou arquivo customizado:
 python src/main.py < dados/entradas_do_problema.txt
 ```
 
+###  Como Executar a Apresentação (Slides Interativos)
+A apresentação interativa contém slides dinâmicos e simuladores gráficos do algoritmo de Dijkstra e da filtragem de caminhos mínimos. Para executá-la:
+1. Abra a pasta `apresentacao/`.
+2. Dê um duplo clique no arquivo `apresentacao.html` para abri-lo diretamente em qualquer navegador moderno (Chrome, Firefox, Edge, Safari, etc.).
+3. Navegue entre os slides utilizando as teclas de direção do teclado (`←` e `→`), a barra de espaço, ou os botões do rodapé.
+4. Nos slides 2 e 5, interaja com as demonstrações clicando nos botões interativos para ver o Dijkstra atuar e filtrar as arestas ótimas.
+
 ---
 
-## 💡 Modelagem do Problema e Representação
+##  Modelagem do Problema e Representação
 
 ### Representação do Grafo
 Utilizamos a representação de **Lista de Adjacência** baseada na renomada estrutura clássica `algs4` (Sedgewick & Wayne). 
@@ -74,7 +81,7 @@ Utilizamos a representação de **Lista de Adjacência** baseada na renomada est
 
 ---
 
-## 🧠 Algoritmo e Abordagem
+##  Algoritmo e Abordagem
 
 O problema consiste em encontrar a menor distância entre uma origem $S$ e um destino $D$ **após remover todas as arestas que pertencem a qualquer um dos menores caminhos originais**. 
 
@@ -93,7 +100,7 @@ O processo é resolvido em 3 etapas de Dijkstra:
 
 ---
 
-## 📊 Análise de Complexidade
+##  Análise de Complexidade
 
 ### Complexidade Temporal
 *   **Algoritmo de Dijkstra:** Implementado com fila de prioridades mínima baseada em heaps binários (`heapq`), operando em $\mathcal{O}((V + E) \log V)$ no pior caso.
@@ -107,7 +114,7 @@ O processo é resolvido em 3 etapas de Dijkstra:
 
 ---
 
-## ⚠️ Casos Especiais Tratados
+##  Casos Especiais Tratados
 
 A nossa modelagem e implementação cobrem robustamente todos os casos de borda e situações de exceção previstos no problema:
 
@@ -126,10 +133,8 @@ A nossa modelagem e implementação cobrem robustamente todos os casos de borda 
 
 ---
 
-## 🏆 Evidência de Submissão (Accepted)
+##  Evidência de Submissão (Accepted)
 
 Abaixo está o registro visual da submissão com o status de **Accepted** no portal de correção UVa Online Judge:
 
-![Accepted Status](evidencias/accepted.png)
-
-*(Nota: Substitua o arquivo `evidencias/accepted.png` pelo print screen correspondente de sua própria conta para validação completa).*
+![Accepted Status](evidencias/aceppted.jpeg)

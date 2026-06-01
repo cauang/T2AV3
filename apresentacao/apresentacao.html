@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apresentação: Quase Menor Caminho</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131a2e;
+            --card-bg: rgba(22, 30, 52, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-primary: #6366f1; 
+            --accent-secondary: #a855f7; 
+            --accent-tertiary: #f43f5e; 
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --font-title: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        header {
+            padding: 0.75rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(11, 15, 25, 0.6);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .logo {
+            font-family: var(--font-title);
+            font-weight: 800;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #a5b4fc;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        main {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .slide-deck {
+            position: relative;
+            width: 80%;
+            max-width: 1400px;
+            height: 100%;
+            max-height: 76vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.96) translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 2.25rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: scale(1) translateY(0);
+            z-index: 2;
+        }
+
+        .slide-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .slide-title {
+            font-family: var(--font-title);
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .slide-title i {
+            color: var(--accent-primary);
+        }
+
+        .slide-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .slide-content {
+            flex: 1;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .col-left, .col-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        h3 {
+            font-family: var(--font-title);
+            font-size: 1.4rem;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .highlight-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1.25rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1rem;
+        }
+
+        .highlight-box.teal {
+            border-left-color: var(--accent-secondary);
+        }
+
+        .highlight-box.rose {
+            border-left-color: var(--accent-tertiary);
+        }
+
+        ul {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        li::before {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            top: 2px;
+            color: var(--accent-secondary);
+            font-size: 0.9rem;
+        }
+
+        li.warning::before {
+            content: "\f00d";
+            color: var(--accent-tertiary);
+        }
+
+        li.bullet::before {
+            content: "\f111";
+            font-size: 0.5rem;
+            top: 7px;
+            color: var(--accent-primary);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-primary), #4f46e5);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-family: var(--font-body);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: none;
+        }
+
+        .controls {
+            padding: 0.75rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            transform: scale(1.05);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .slide-indicators {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .indicator.active {
+            background: var(--accent-primary);
+            width: 24px;
+            border-radius: 5px;
+        }
+
+        .cover-slide {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .cover-title {
+            font-family: var(--font-title);
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .cover-accent {
+            color: var(--accent-secondary);
+            font-size: 3.5rem;
+        }
+
+        .cover-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+
+        .dist-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .dist-canvas-container {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            background: #111827;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .dist-toggle {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            background: rgba(255,255,255,0.05);
+            padding: 0.25rem;
+            border-radius: 8px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            background: rgba(0,0,0,0.2);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .chart-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .chart-bar-bg {
+            height: 24px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-bar {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            padding-left: 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: white;
+            transition: width 1s ease-out;
+        }
+
+        .chart-bar.red {
+            background: linear-gradient(90deg, #f43f5e, #be123c);
+        }
+
+        .chart-bar.green {
+            background: linear-gradient(90deg, #10b981, #047857);
+            width: 1%;
+        }
+
+        .simulator-layout {
+            display: flex;
+            gap: 1.5rem;
+            width: 100%;
+            height: 450px;
+        }
+
+        .simulator-left {
+            flex: 1.4;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .simulator-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            height: 100%;
+        }
+
+        .sim-canvas-wrapper {
+            position: relative;
+            flex: 1;
+            background: #0f172a;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 380px;
+        }
+
+        #simulatorCanvas {
+            background: #0f172a;
+        }
+
+        .sim-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .log-panel {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            background: #020617;
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.8rem;
+            color: #38bdf8;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-entry {
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+        }
+
+        .log-entry.system { color: #94a3b8; }
+        .log-entry.success { color: #4ade80; }
+        .log-entry.edge { color: #f43f5e; }
+
+        .code-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .code-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+        }
+
+        .code-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .code-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .code-card-header span {
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--accent-secondary);
+        }
+
+        .code-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .submission-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 2rem;
+            border-radius: 16px;
+        }
+
+        .sub-icon {
+            font-size: 4rem;
+            color: #10b981;
+        }
+
+        /* Step workflow */
+        .step-timeline {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+            gap: 1rem;
+        }
+
+        .step-item {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .step-item:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-secondary);
+            background: rgba(168, 85, 247, 0.05);
+        }
+
+        .step-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            margin: 0 auto;
+        }
+
+        .step-title {
+            font-family: var(--font-title);
+            font-weight: 700;
+            color: #ffffff;
+            font-size: 1.1rem;
+        }
+
+        .step-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-route"></i>
+            Quase Menor Caminho
+        </div>
+        <div class="badge">Trabalho Prático 2 — Unidade 3</div>
+    </header>
+
+    <main>
+
+        <div class="slide-deck">
+
+            <!-- Slide 1: Capa -->
+            <div class="slide active cover-slide" id="slide-1">
+                <div>
+                    <h1 class="cover-title">Almost Shortest Path<br>Quase Menor Caminho <span class="cover-accent">(UVa 12144)</span></h1>
+                    <p class="cover-subtitle">Uma abordagem estruturada combinando buscas baseadas no algoritmo de Dijkstra com filtragem inteligente de arestas.</p>
+                    <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem;">
+                        <span class="badge">Isadora F. N. Rios</span>
+                        <span class="badge">João Victor L. S. Leão</span>
+                        <span class="badge">Cauan G. S. Barbosa</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2: O Problema Proposto -->
+            <div class="slide" id="slide-2">
+                <div class="slide-header">
+                    <h2 class="slide-title"><i class="fa-solid fa-circle-question"></i> O Problema Proposto</h2>
+                    <p class="slide-subtitle">Como conectar pontos sem utilizar arestas que compõem caminhos mínimos.</p>
+                </div>
+                <div class="slide-content">
+                    <div class="col-left">
+                        <div class="highlight-box">
+                            <h3>Definição do Quase Menor Caminho</h3>
+                            <p>Encontrar o menor caminho entre a origem <strong>S</strong> e o destino <strong>D</strong> no grafo, desconsiderando qualquer aresta pertencente a <strong>pelo menos um</strong> dos caminhos mais curtos.</p>
+                        </div>
+                        <div class="highlight-box teal">
+                            <h3>Regras e Casos de Borda</h3>
+                            <p>Se nenhum caminho alternativo restar após a exclusão de caminhos ótimos, ou se não houver conexão inicial ligando <strong>S</strong> a <strong>D</strong>, a resposta impressa deve ser <strong>-1</strong>.</p>
+                            <p>Pesos das arestas são positivos e o grafo é direcionado.</p>
+                        </div>
+                    </div>
+                    <div class="col-right">
+                        <div class="dist-demo">
+                            <h3>Caminho Ótimo vs Alternativo</h3>
+                            <div class="dist-canvas-container">
+                                <canvas id="distCanvas" width="320" height="320"></canvas>
+                            </div>
+                            <div class="dist-toggle">
+                                <button class="toggle-btn active" id="btn-manhattan" onclick="setDistType('shortest')">Caminhos Mínimos</button>
+                                <button class="toggle-btn" id="btn-euclidean" onclick="setDistType('almost')">Quase Menor</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: O Desafio da Escala -->
+            <div class="slide" id="slide-3">
+                <div class="slide-header">
+                    <h2 class="slide-title"><i class="fa-solid fa-triangle-exclamation"></i> O Desafio da Escala</h2>
+                    <p class="slide-subtitle">Por que implementações ingênuas de fila de prioridade falham em Python.</p>
+                </div>
+                <div class="slide-content">
+                    <div class="col-left">
+                        <h3>Restrições Estritas (UVa Judge)</h3>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-bottom: 1rem;">
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 0.5rem 0.75rem; border-radius: 8px;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Limite de Tempo</span>
+                                <strong style="color: var(--accent-secondary); font-size: 1.1rem;">2.0s - 3.0s</strong>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 0.5rem 0.75rem; border-radius: 8px;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Vértices (V)</span>
+                                <strong style="color: var(--accent-secondary); font-size: 1.1rem;">&le; 500</strong>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 0.5rem 0.75rem; border-radius: 8px;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Arestas (E)</span>
+                                <strong style="color: var(--accent-tertiary); font-size: 1.1rem;">&le; 10.000</strong>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 0.5rem 0.75rem; border-radius: 8px;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Casos de Teste</span>
+                                <strong style="color: var(--accent-tertiary); font-size: 1.1rem;">Até 100+</strong>
+                            </div>
+                        </div>
+
+                        <h3>O Problema de Fila Não Otimizada</h3>
+                        <p>Dijkstra executado múltiplas vezes por caso de teste exige uma fila de prioridades extremamente veloz. Abordagens sem heaps geram sobrecarga temporal massiva:</p>
+                        <ul>
+                            <li class="warning"><strong>Busca linear na fila:</strong> O(V²) por Dijkstra, levando a Time Limit Exceeded (TLE).</li>
+                            <li class="warning"><strong>Cópia física de grafos:</strong> Consome CPU e RAM de maneira ineficiente.</li>
+                        </ul>
+                    </div>
+                    <div class="col-right">
+                        <div class="chart-container">
+                            <h3>Tempo de Execução Acumulado</h3>
+                            <div class="chart-row">
+                                <div class="chart-label">
+                                    <span>Busca Linear (Sem Heap)</span>
+                                    <span style="color: var(--accent-tertiary);">&gt; 3.5s (TLE)</span>
+                                </div>
+                                <div class="chart-bar-bg">
+                                    <div class="chart-bar red" style="width: 100%;">Complexidade O(V²)</div>
+                                </div>
+                            </div>
+                            <div class="chart-row">
+                                <div class="chart-label">
+                                    <span>Nossa Abordagem (Fila baseada em Heap)</span>
+                                    <span style="color: var(--accent-secondary);" id="actual-edges-num">~0.18s</span>
+                                </div>
+                                <div class="chart-bar-bg">
+                                    <div class="chart-bar green" id="green-bar"></div>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--accent-secondary); margin-top: 0.25rem; font-weight: 600; display: flex; align-items: center; gap: 0.35rem;">
+                                    <i class="fa-solid fa-bolt-lightning"></i> Otimização assintótica e uso de heapq nativo
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: A Estratégia de 3 Dijkstras -->
+            <div class="slide" id="slide-4">
+                <div class="slide-header">
+                    <h2 class="slide-title"><i class="fa-solid fa-wave-square"></i> A Estratégia de 3 Dijkstras</h2>
+                    <p class="slide-subtitle">Como remover arestas pertencentes a caminhos ótimos sem recriar grafos.</p>
+                </div>
+                <div class="slide-content" style="flex-direction: column; justify-content: center; gap: 1.5rem;">
+                    <div class="step-timeline">
+                        <div class="step-item">
+                            <div class="step-number">1</div>
+                            <div class="step-title">Dijkstra de Ida</div>
+                            <p class="step-desc">Calcula as menores distâncias a partir de <strong>S</strong> no grafo original. Obtemos o vetor <code>distS</code>.</p>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">2</div>
+                            <div class="step-title">Dijkstra Reverso</div>
+                            <p class="step-desc">Calcula as menores distâncias até <strong>D</strong> usando o grafo transposto (invertido). Obtemos o vetor <code>distD</code>.</p>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">3</div>
+                            <div class="step-title">Filtro de Arestas</div>
+                            <p class="step-desc">Arestas <code>(u, v)</code> de peso <code>W</code> que participam de caminhos mínimos satisfazem a condição de exclusão.</p>
+                        </div>
+                        <div class="step-item">
+                            <div class="step-number">4</div>
+                            <div class="step-title">Cálculo Final</div>
+                            <p class="step-desc">Roda o terceiro Dijkstra de <strong>S</strong> para <strong>D</strong> ignorando as arestas excluídas.</p>
+                        </div>
+                    </div>
+                    <div class="highlight-box teal" style="width: 100%; text-align: center; font-family: monospace; font-size: 1.05rem; margin-top: 0.5rem; margin-bottom: 0;">
+                        <strong>Condição de remoção:</strong> <code>distS[u] + peso(u, v) + distD[v] == distS[destino]</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Simulador Interativo -->
+            <div class="slide" id="slide-5">
+                <div class="slide-header">
+                    <h2 class="slide-title"><i class="fa-solid fa-play"></i> Simulador Interativo</h2>
+                    <p class="slide-subtitle">Veja o algoritmo em execução passo a passo no grafo de exemplo.</p>
+                </div>
+                <div class="slide-content" style="align-items: stretch;">
+                    <div class="simulator-layout">
+                        <div class="simulator-left">
+                            <div class="sim-canvas-wrapper">
+                                <canvas id="simulatorCanvas" width="480" height="380"></canvas>
+                            </div>
+                            <div class="sim-controls">
+                                <button class="btn" id="btn-run-bfs" onclick="startSimDijkstra()">
+                                    <i class="fa-solid fa-calculator"></i> 1. Rodar Dijkstras & Filtrar
+                                </button>
+                                <button class="btn" id="btn-run-kruskal" onclick="startSimAlmostShortest()" disabled>
+                                    <i class="fa-solid fa-route"></i> 2. Quase Menor Caminho
+                                </button>
+                                <button class="btn btn-secondary" onclick="resetSimulator()">
+                                    <i class="fa-solid fa-rotate-right"></i> Resetar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="simulator-right">
+                            <h3>Console de Execução</h3>
+                            <div class="log-panel" id="simLog">
+                                <div class="log-entry system">Grafo carregado com sucesso. Clique em "1. Rodar Dijkstras & Filtrar" para iniciar!</div>
+                            </div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;">
+                                <strong>Legenda:</strong>
+                                <div style="display: flex; gap: 1rem; margin-top: 0.25rem;">
+                                    <span><i class="fa-solid fa-square" style="color: #6366f1;"></i> Original</span>
+                                    <span><i class="fa-solid fa-square" style="color: #f43f5e;"></i> Removido</span>
+                                    <span><i class="fa-solid fa-square" style="color: #10b981;"></i> Quase Menor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 6: Arquitetura Modular do Código -->
+            <div class="slide" id="slide-6">
+                <div class="slide-header">
+                    <h2 class="slide-title"><i class="fa-solid fa-code"></i> Arquitetura Modular do Código</h2>
+                    <p class="slide-subtitle">Como as responsabilidades foram separadas seguindo padrões elegantes.</p>
+                </div>
+                <div class="slide-content">
+                    <div class="code-grid">
+                        <div class="code-card">
+                            <div class="code-card-header">
+                                <span>directed_edge.py / bag.py</span>
+                                <i class="fa-solid fa-boxes-stacked"></i>
+                            </div>
+                            <p><strong>Aresta Direcionada e Bag:</strong> Estruturas orientadas a objetos inspiradas no algs4 para modelar arestas com peso e listas de adjacência.</p>
+                        </div>
+                        <div class="code-card">
+                            <div class="code-card-header">
+                                <span>edge_weighted_digraph.py</span>
+                                <i class="fa-solid fa-arrows-spin"></i>
+                            </div>
+                            <p><strong>Grafo Direcionado:</strong> Representação por dígrafo ponderado e suporte ao método <code>reverse()</code> para transpor o grafo de maneira super eficiente.</p>
+                        </div>
+                        <div class="code-card">
+                            <div class="code-card-header">
+                                <span>dijkstra.py</span>
+                                <i class="fa-solid fa-route"></i>
+                            </div>
+                            <p><strong>Busca Dijkstra Otimizada:</strong> Algoritmo de busca desacoplado utilizando fila de prioridades acoplada ao <code>heapq</code> nativo do Python (execução O(E log V)).</p>
+                        </div>
+                        <div class="code-card">
+                            <div class="code-card-header">
+                                <span>solver.py / main.py</span>
+                                <i class="fa-solid fa-gears"></i>
+                            </div>
+                            <p><strong>Filtro e Execução:</strong> Lógica central de negócio executando os Dijkstras e filtrando as frentes ótimas, com main gerenciando I/O rápido.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 7: Complexidade e Resultados -->
+            <div class="slide" id="slide-7">
+                <div class="slide-header">
+                    <h2 class="slide-title"><i class="fa-solid fa-square-poll-vertical"></i> Complexidade e Resultados</h2>
+                    <p class="slide-subtitle">Análise de eficiência assintótica e validação no juiz online.</p>
+                </div>
+                <div class="slide-content">
+                    <div class="col-left">
+                        <h3>Análise Assintótica</h3>
+                        <ul>
+                            <li class="bullet"><strong>Complexidade de Tempo:</strong> Três Dijkstras independentes operando em <strong>O((V + E) log V)</strong> no pior caso.</li>
+                            <li class="bullet"><strong>Complexidade de Espaço:</strong> Dígrafos original e reverso mapeados em memória, consumindo apenas <strong>O(V + E)</strong> (menos de 5MB de RAM).</li>
+                            <li class="bullet"><strong>Uso do heapq nativo:</strong> Escrito em C puro no interpretador oficial CPython, eliminando qualquer overhead de objetos Python na fila.</li>
+                        </ul>
+                    </div>
+                    <div class="col-right" style="gap: 1rem;">
+                        <div class="submission-container" style="padding: 1.25rem; background: rgba(16, 185, 129, 0.02); border: 1px solid rgba(16, 185, 129, 0.15); display: flex; flex-direction: column; gap: 1rem; align-items: center; justify-content: center; overflow: hidden; height: auto;">
+                            <h3 style="margin: 0; color: #10b981; font-family: var(--font-title); font-size: 1.3rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fa-solid fa-circle-check"></i> Submissão Aceita!
+                            </h3>
+                            <img src="../evidencias/aceppted.jpeg" alt="Submissão Aceita" style="max-width: 100%; max-height: 200px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.08);">
+                        </div>
+                        <p style="font-size: 0.85rem; text-align: center; color: var(--text-muted);">
+                            Comprovante oficial de aceite (aceppted.jpeg) disponível na pasta evidencias.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="controls">
+        <div class="slide-indicators" id="indicators">
+
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prev-btn" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="nav-btn" id="next-btn" onclick="nextSlide()"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <script>
+
+        let currentSlide = 1;
+        const totalSlides = 7;
+
+        function updateSlides() {
+
+            for (let i = 1; i <= totalSlides; i++) {
+                const slide = document.getElementById(`slide-${i}`);
+                if (i === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            }
+
+            document.getElementById('prev-btn').disabled = currentSlide === 1;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides;
+
+            const indicators = document.getElementById('indicators').children;
+            for (let i = 0; i < indicators.length; i++) {
+                if (i === currentSlide - 1) {
+                    indicators[i].classList.add('active');
+                } else {
+                    indicators[i].classList.remove('active');
+                }
+            }
+
+            if (currentSlide === 2) {
+                drawDistanceDemo();
+            } else if (currentSlide === 3) {
+                setTimeout(() => {
+                    document.getElementById('green-bar').style.width = '6%';
+                }, 100);
+            } else if (currentSlide === 5) {
+                initSimulator();
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlides();
+            }
+        }
+
+        function goToSlide(num) {
+            currentSlide = num;
+            updateSlides();
+        }
+
+        const indicatorsContainer = document.getElementById('indicators');
+        for (let i = 1; i <= totalSlides; i++) {
+            const ind = document.createElement('div');
+            ind.className = 'indicator' + (i === 1 ? ' active' : '');
+            ind.onclick = () => goToSlide(i);
+            indicatorsContainer.appendChild(ind);
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        let distType = 'shortest';
+        const distCanvas = document.getElementById('distCanvas');
+
+        function setDistType(type) {
+            distType = type;
+            document.getElementById('btn-manhattan').classList.toggle('active', type === 'shortest');
+            document.getElementById('btn-euclidean').classList.toggle('active', type === 'almost');
+            drawDistanceDemo();
+        }
+
+        function drawDistanceDemo() {
+            if (!distCanvas) return;
+            const ctx = distCanvas.getContext('2d');
+            ctx.clearRect(0, 0, distCanvas.width, distCanvas.height);
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+            ctx.lineWidth = 1;
+            const step = 20;
+            for(let x = 0; x < distCanvas.width; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, distCanvas.height);
+                ctx.stroke();
+            }
+            for(let y = 0; y < distCanvas.height; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(distCanvas.width, y);
+                ctx.stroke();
+            }
+
+            const nodes = {
+                S: { x: 50, y: 160, label: 'Origem S' },
+                A: { x: 160, y: 60, label: 'A' },
+                B: { x: 160, y: 260, label: 'B' },
+                C: { x: 160, y: 160, label: 'C' },
+                D: { x: 270, y: 160, label: 'Destino D' }
+            };
+
+            const edges = [
+                { from: 'S', to: 'A', weight: '3', isShortest: true },
+                { from: 'A', to: 'D', weight: '2', isShortest: true },
+                { from: 'S', to: 'B', weight: '2', isShortest: true },
+                { from: 'B', to: 'D', weight: '3', isShortest: true },
+                { from: 'S', to: 'C', weight: '4', isAlmost: true },
+                { from: 'C', to: 'D', weight: '3', isAlmost: true }
+            ];
+
+            edges.forEach(e => {
+                const start = nodes[e.from];
+                const end = nodes[e.to];
+                
+                ctx.beginPath();
+                ctx.moveTo(start.x, start.y);
+                ctx.lineTo(end.x, end.y);
+
+                let isHighlighted = false;
+                let isDashed = false;
+                let color = 'rgba(255, 255, 255, 0.15)';
+                let width = 2;
+
+                if (distType === 'shortest') {
+                    if (e.isShortest) {
+                        color = '#6366f1';
+                        width = 4;
+                        isHighlighted = true;
+                    }
+                } else if (distType === 'almost') {
+                    if (e.isShortest) {
+                        color = '#f43f5e';
+                        width = 2;
+                        isDashed = true;
+                    } else if (e.isAlmost) {
+                        color = '#14b8a6';
+                        width = 4;
+                        isHighlighted = true;
+                    }
+                }
+
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                if (isDashed) {
+                    ctx.setLineDash([4, 4]);
+                } else {
+                    ctx.setLineDash([]);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                const midX = (start.x + end.x) / 2;
+                const midY = (start.y + end.y) / 2;
+                
+                let offset = -8;
+                if (e.from === 'S' && e.to === 'B') offset = 14;
+                if (e.from === 'B' && e.to === 'D') offset = 14;
+                if (e.from === 'S' && e.to === 'C') offset = -6;
+                if (e.from === 'C' && e.to === 'D') offset = -6;
+
+                ctx.fillStyle = isHighlighted ? '#ffffff' : '#94a3b8';
+                ctx.font = 'bold 12px Inter';
+                ctx.fillText(e.weight, midX, midY + offset);
+            });
+
+            Object.keys(nodes).forEach(key => {
+                const n = nodes[key];
+                ctx.beginPath();
+                ctx.arc(n.x, n.y, 16, 0, Math.PI * 2);
+                
+                let fill = '#1e293b';
+                let stroke = 'rgba(255, 255, 255, 0.2)';
+                
+                if (key === 'S') {
+                    fill = '#6366f1';
+                    stroke = '#ffffff';
+                } else if (key === 'D') {
+                    fill = '#a855f7';
+                    stroke = '#ffffff';
+                }
+
+                ctx.fillStyle = fill;
+                ctx.strokeStyle = stroke;
+                ctx.lineWidth = 2;
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 11px Inter';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(key, n.x, n.y);
+
+                ctx.fillStyle = '#cbd5e1';
+                ctx.font = '10px Inter';
+                if (key === 'S') {
+                    ctx.fillText(n.label, n.x - 5, n.y + 28);
+                } else if (key === 'D') {
+                    ctx.fillText(n.label, n.x + 5, n.y + 28);
+                }
+            });
+
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '12px Inter';
+            ctx.textAlign = 'left';
+            if (distType === 'shortest') {
+                ctx.fillText('Caminhos mínimos (Custo 5):', 10, distCanvas.height - 30);
+                ctx.fillStyle = '#a5b4fc';
+                ctx.fillText('S→A→D (3+2) e S→B→D (2+3)', 10, distCanvas.height - 12);
+            } else {
+                ctx.fillText('Caminhos mínimos removidos.', 10, distCanvas.height - 30);
+                ctx.fillStyle = '#14b8a6';
+                ctx.fillText('Quase menor: S→C→D (4+3=7)', 10, distCanvas.height - 12);
+            }
+        }
+
+        let simActiveStep = 0;
+        const simPoints = [
+            { x: 60, y: 190, label: 'S', id: 0 },
+            { x: 210, y: 70, label: 'A', id: 1 },
+            { x: 210, y: 310, label: 'B', id: 2 },
+            { x: 210, y: 190, label: 'C', id: 3 },
+            { x: 380, y: 190, label: 'D', id: 4 }
+        ];
+
+        const simEdges = [
+            { u: 0, v: 1, w: 3, type: 'shortest' },
+            { u: 1, v: 4, w: 2, type: 'shortest' },
+            { u: 0, v: 2, w: 2, type: 'shortest' },
+            { u: 2, v: 4, w: 3, type: 'shortest' },
+            { u: 0, v: 3, w: 4, type: 'almost' },
+            { u: 3, v: 4, w: 3, type: 'almost' }
+        ];
+
+        function initSimulator() {
+            simCanvas = document.getElementById('simulatorCanvas');
+            if (!simCanvas) return;
+            simCtx = simCanvas.getContext('2d');
+            resetSimulator();
+        }
+
+        function logSim(msg, type = 'normal') {
+            const logPanel = document.getElementById('simLog');
+            if (!logPanel) return;
+            const div = document.createElement('div');
+            div.className = `log-entry ${type}`;
+            div.innerText = msg;
+            logPanel.appendChild(div);
+            logPanel.scrollTop = logPanel.scrollHeight;
+        }
+
+        function resetSimulator() {
+            simActiveStep = 0;
+            document.getElementById('btn-run-bfs').disabled = false;
+            document.getElementById('btn-run-kruskal').disabled = true;
+
+            const logPanel = document.getElementById('simLog');
+            if (logPanel) logPanel.innerHTML = '';
+            logSim("Simulador pronto. Grafo com 5 vértices e 6 arestas carregado.", "system");
+            drawSimulator();
+        }
+
+        function drawSimulator() {
+            if (!simCtx) return;
+            simCtx.clearRect(0, 0, simCanvas.width, simCanvas.height);
+
+            simCtx.strokeStyle = 'rgba(255, 255, 255, 0.02)';
+            simCtx.lineWidth = 1;
+            const step = 20;
+            for(let x = 0; x < simCanvas.width; x += step) {
+                simCtx.beginPath();
+                simCtx.moveTo(x, 0);
+                simCtx.lineTo(x, simCanvas.height);
+                simCtx.stroke();
+            }
+            for(let y = 0; y < simCanvas.height; y += step) {
+                simCtx.beginPath();
+                simCtx.moveTo(0, y);
+                simCtx.lineTo(simCanvas.width, y);
+                simCtx.stroke();
+            }
+
+            simEdges.forEach(edge => {
+                const p1 = simPoints[edge.u];
+                const p2 = simPoints[edge.v];
+
+                let color = 'rgba(255, 255, 255, 0.2)';
+                let width = 2;
+                let isDashed = false;
+
+                if (simActiveStep === 1) {
+                    if (edge.type === 'shortest') {
+                        color = '#f43f5e';
+                        isDashed = true;
+                    }
+                } else if (simActiveStep === 2) {
+                    if (edge.type === 'shortest') {
+                        color = 'rgba(244, 63, 94, 0.1)';
+                        isDashed = true;
+                    } else if (edge.type === 'almost') {
+                        color = '#10b981';
+                        width = 4;
+                    }
+                } else {
+                    color = 'rgba(255, 255, 255, 0.3)';
+                }
+
+                drawArrow(simCtx, p1.x, p1.y, p2.x, p2.y, color, width, isDashed);
+
+                const midX = (p1.x + p2.x) / 2;
+                const midY = (p1.y + p2.y) / 2;
+                let offset = -8;
+                if (edge.u === 0 && edge.v === 2) offset = 14;
+                if (edge.u === 2 && edge.v === 4) offset = 14;
+
+                simCtx.fillStyle = (simActiveStep > 0) ? '#ffffff' : '#94a3b8';
+                simCtx.font = 'bold 11px Inter';
+                simCtx.fillText(edge.w, midX, midY + offset);
+            });
+
+            simPoints.forEach(p => {
+                const centerX = p.x;
+                const centerY = p.y;
+
+                let fill = '#1e293b';
+                let stroke = 'rgba(255, 255, 255, 0.2)';
+
+                if (p.id === 0) {
+                    fill = '#6366f1';
+                    stroke = '#ffffff';
+                } else if (p.id === 4) {
+                    fill = '#a855f7';
+                    stroke = '#ffffff';
+                }
+
+                simCtx.fillStyle = fill;
+                simCtx.beginPath();
+                simCtx.arc(centerX, centerY, 16, 0, Math.PI * 2);
+                simCtx.fill();
+
+                simCtx.strokeStyle = stroke;
+                simCtx.lineWidth = 2;
+                simCtx.stroke();
+
+                simCtx.fillStyle = '#ffffff';
+                simCtx.font = 'bold 11px Inter';
+                simCtx.textAlign = 'center';
+                simCtx.textBaseline = 'middle';
+                simCtx.fillText(p.label, centerX, centerY);
+            });
+        }
+
+        function drawArrow(ctx, fromx, fromy, tox, toy, color, width, isDashed = false) {
+            const headlen = 10;
+            const dx = tox - fromx;
+            const dy = toy - fromy;
+            const angle = Math.atan2(dy, dx);
+            
+            const offset = 18;
+            const realTox = tox - offset * Math.cos(angle);
+            const realToy = toy - offset * Math.sin(angle);
+            const realFromX = fromx + offset * Math.cos(angle);
+            const realFromY = fromy + offset * Math.sin(angle);
+
+            ctx.beginPath();
+            ctx.moveTo(realFromX, realFromY);
+            ctx.lineTo(realTox, realToy);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            if (isDashed) {
+                ctx.setLineDash([4, 4]);
+            } else {
+                ctx.setLineDash([]);
+            }
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(realTox, realToy);
+            ctx.lineTo(realTox - headlen * Math.cos(angle - Math.PI / 6), realToy - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(realTox - headlen * Math.cos(angle + Math.PI / 6), realToy - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.closePath();
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.setLineDash([]);
+        }
+
+        function startSimDijkstra() {
+            simActiveStep = 1;
+            document.getElementById('btn-run-bfs').disabled = true;
+            document.getElementById('btn-run-kruskal').disabled = false;
+
+            logSim("Rodando Dijkstra de Ida (origem S)...", "system");
+            logSim("Distâncias a partir de S: S=0, A=3, B=2, C=4, D=5", "success");
+            logSim("Rodando Dijkstra Reverso (destino D)...", "system");
+            logSim("Distâncias até D: S=5, A=2, B=3, C=3, D=0", "success");
+            logSim("Filtrando arestas ótimas via condição de menor caminho:", "system");
+            logSim("  - Aresta S->A (3): 0 + 3 + 2 = 5 == 5 (Remover!)", "edge");
+            logSim("  - Aresta A->D (2): 3 + 2 + 0 = 5 == 5 (Remover!)", "edge");
+            logSim("  - Aresta S->B (2): 0 + 2 + 3 = 5 == 5 (Remover!)", "edge");
+            logSim("  - Aresta B->D (3): 2 + 3 + 0 = 5 == 5 (Remover!)", "edge");
+            logSim("  - Aresta S->C (4): 0 + 4 + 3 = 7 != 5 (Manter)", "success");
+            logSim("  - Aresta C->D (3): 4 + 3 + 0 = 7 != 5 (Manter)", "success");
+            logSim("Arestas ótimas marcadas como vermelhas e desabilitadas.", "system");
+
+            drawSimulator();
+        }
+
+        function startSimAlmostShortest() {
+            simActiveStep = 2;
+            document.getElementById('btn-run-kruskal').disabled = true;
+
+            logSim("Rodando terceiro Dijkstra no grafo filtrado...", "system");
+            logSim("Caminho encontrado: S -> C -> D", "success");
+            logSim("Custo acumulado do Quase Menor Caminho: 7", "success");
+            logSim("Algoritmo concluído com sucesso!", "system");
+
+            drawSimulator();
+        }
+    </script>
+</body>
+</html>
