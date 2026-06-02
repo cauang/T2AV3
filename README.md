@@ -138,4 +138,4 @@ A nossa modelagem e implementação cobrem robustamente todos os casos de borda 
 
 Abaixo está o registro visual da submissão com o status de **Accepted** no portal de correção UVa Online Judge:
 
-![Accepted Status](evidencias/Captura de tela 2026-06-02 115047.png)
+![Accepted Status](evidencias/aceppted.png)
